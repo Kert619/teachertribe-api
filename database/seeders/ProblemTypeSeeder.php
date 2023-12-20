@@ -14,14 +14,14 @@ class ProblemTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $html = ExamType::where('type', 'HTML')->first();
-        $css = ExamType::where('type', 'CSS')->first();
-        $javascript = ExamType::where('type', 'Javascript')->first();
+        $html = ExamType::where('exam_type', 'HTML')->first();
+        $css = ExamType::where('exam_type', 'CSS')->first();
+        $javascript = ExamType::where('exam_type', 'Javascript')->first();
 
         $problemTypes = [
-            ['type' => 'HTML Problem 1', 'exam_type_id' => $html->id],
-            ['type' => 'CSS Problem 1', 'exam_type_id' => $css->id],
-            ['type' => 'Javascript Problem 1', 'exam_type_id' => $javascript->id],
+            ['problem_type' => 'HTML Problem 1', 'exam_type_id' => $html->id],
+            ['problem_type' => 'CSS Problem 1', 'exam_type_id' => $css->id],
+            ['problem_type' => 'Javascript Problem 1', 'exam_type_id' => $javascript->id],
         ];
 
         ProblemType::insert($problemTypes);

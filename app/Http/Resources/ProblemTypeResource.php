@@ -16,8 +16,9 @@ class ProblemTypeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'type' => $this->type,
-            'examType' => new ExamTypeResource($this->whenLoaded('examType'))
+            'problemType' => $this->problem_type,
+            'examType' => new ExamTypeResource($this->whenLoaded('examType')),
+            'problems' => ProblemResource::collection($this->whenLoaded('problems'))
         ];
     }
 }

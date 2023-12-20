@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('problem_types', function (Blueprint $table) {
+        Schema::create('problems', function (Blueprint $table) {
             $table->id();
-            $table->string('problem_type');
-            $table->foreignId('exam_type_id')->constrained();
+            $table->string('problem_title');
+            $table->text('description')->nullable();
+            $table->foreignId('problem_type_id')->constrained();
+            $table->string('difficulty');
+            $table->integer('duration');
+            $table->text('instructions');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('problem_types');
+        Schema::dropIfExists('problems');
     }
 };

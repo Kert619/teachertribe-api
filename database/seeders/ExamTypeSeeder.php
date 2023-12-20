@@ -14,9 +14,9 @@ class ExamTypeSeeder extends Seeder
     public function run(): void
     {
         $examTypes = [
-            ['type' => 'HTML'],
-            ['type' => 'CSS'],
-            ['type' => 'Javascript'],
+            ['exam_type' => 'HTML'],
+            ['exam_type' => 'CSS'],
+            ['exam_type' => 'Javascript'],
         ];
 
         ExamType::insert($examTypes);

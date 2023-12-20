@@ -4,6 +4,7 @@ use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProblemTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +25,9 @@ Route::post('/login', LoginController::class);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
 
-    Route::apiResource('/exam-type', ExamTypeController::class);
-    Route::apiResource('/problem-type', ProblemTypeController::class);
+    Route::apiResource('/exam-types', ExamTypeController::class);
+    Route::apiResource('/problem-types', ProblemTypeController::class);
+    Route::apiResource('/problems', ProblemController::class);
 
     Route::post('logout', LogoutController::class);
 });
