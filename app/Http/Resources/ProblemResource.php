@@ -16,12 +16,13 @@ class ProblemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'problemTitle' => $this->problem_title,
-            'problemDescription' => $this->problem_description,
-            'problemType' => new ProblemTypeResource($this->whenLoaded('problemType')),
+            'problem_title' => $this->problem_title,
+            'description' => $this->description,
+            'problem_type' => new ProblemTypeResource($this->whenLoaded('problemType')),
             'difficulty' => $this->difficulty,
             'duration' => $this->duration,
-            'instructions' => $this->instructions
+            'instructions' => $this->instructions,
+            'date_created' => $this->created_at,
         ];
     }
 }

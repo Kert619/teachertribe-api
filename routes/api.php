@@ -26,8 +26,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
 
     Route::apiResource('/exam-types', ExamTypeController::class);
-    Route::apiResource('/problem-types', ProblemTypeController::class);
     Route::apiResource('/problems', ProblemController::class);
+
+    Route::prefix('/problem-types')->group(function(){
+        Route::apiResource('/', ProblemTypeController::class);
+        Route::get('/{examType}/get-all-by-exam-type-id', [ProblemTypeController::class, 'getAllByExamTypeId']);
+    });
+
 
     Route::post('logout', LogoutController::class);
 });

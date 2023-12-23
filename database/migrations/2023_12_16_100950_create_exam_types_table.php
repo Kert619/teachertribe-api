@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('exam_types', function (Blueprint $table) {
             $table->id();
-            $table->string('exam_type');
+            $table->string('exam_type')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

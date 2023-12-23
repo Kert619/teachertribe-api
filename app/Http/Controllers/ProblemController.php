@@ -16,7 +16,7 @@ class ProblemController extends Controller
      */
     public function index()
     {
-        $problems = Problem::with(['problemType', 'examType'])->get();
+        $problems = Problem::with(['problemType', 'problemType.examType'])->get();
         return ProblemResource::collection($problems);
     }
 
@@ -25,18 +25,20 @@ class ProblemController extends Controller
      */
     public function store(StoreProblemRequest $request)
     {
-        $validated = $request->validated();
+        $request->validated($request->all());
 
         $problem = Problem::create([
-            'problem_title' => $validated->problem_title,
-            'problem_description' => $validated->problem_description,
-            'problem_type_id' => $validated->problem_type_id,
-            'difficulty' => $validated->difficulty,
-            'duration' => $validated->duration,
-            'instructions' => $validated->instructions
+            'problem_title' => $request->problem_title,
+            'description' => $request->description,
+            'problem_type_id' => $request->problem_type_id,
+            'difficulty' => $request->difficulty,
+            'duration' => $request->duration,
+            'instructions' => $request->instructions
         ]);
 
-        return $this->success($problem, 'New problem has been added');
+        $problem->load(['problemType', 'problemType.examType']);
+
+        return $this->success(new ProblemResource($problem), 'New problem has been added');
     }
 
     /**

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('problems', function (Blueprint $table) {
             $table->id();
-            $table->string('problem_title');
+            $table->string('problem_title')->unique();
             $table->text('description')->nullable();
             $table->foreignId('problem_type_id')->constrained();
             $table->string('difficulty');

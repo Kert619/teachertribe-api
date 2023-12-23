@@ -23,11 +23,11 @@ class StoreProblemRequest extends FormRequest
     {
         return [
             'problem_title' => ['required', 'max:255', 'unique:problems'],
-            'problem_description' => ['nullable'],
+            'description' => ['nullable'],
             'problem_type_id' => ['required'],
             'difficulty' => ['required'],
             'duration' => ['required'],
-            'instructions' => ['nullable']
+            'instructions' => ['required']
         ];
     }
 }
