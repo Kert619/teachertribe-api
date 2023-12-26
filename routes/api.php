@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\LoginController;
@@ -26,12 +27,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
 
     Route::apiResource('/exam-types', ExamTypeController::class);
+    Route::apiResource('/problem-types', ProblemTypeController::class);
     Route::apiResource('/problems', ProblemController::class);
+    Route::apiResource('/assessments', AssessmentController::class);
 
     Route::prefix('/problem-types')->group(function(){
-        Route::apiResource('/', ProblemTypeController::class);
         Route::get('/{examType}/get-all-by-exam-type-id', [ProblemTypeController::class, 'getAllByExamTypeId']);
     });
+
+    Route::prefix('/problems')->group(function(){
+        Route::get('/{problemType}/get-all-by-problem-type-id', [ProblemController::class, 'getAllByProblemTypeId']);
+    });
+
+    Route::prefix('/assessments')->group(function(){
+        Route::post('/check-existing-assessment-title', [AssessmentController::class, 'checkExistingAssessmentTitle']);
+    });
+
 
 
     Route::post('logout', LogoutController::class);

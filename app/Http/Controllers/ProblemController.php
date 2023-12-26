@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProblemRequest;
 use App\Http\Resources\ProblemResource;
 use App\Models\Problem;
+use App\Models\ProblemType;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class ProblemController extends Controller
      */
     public function index()
     {
-        $problems = Problem::with(['problemType', 'problemType.examType'])->get();
+        $problems = Problem::with(['problemType', 'problemType.examType', 'assessments'])->get();
         return ProblemResource::collection($problems);
     }
 
@@ -36,9 +37,18 @@ class ProblemController extends Controller
             'instructions' => $request->instructions
         ]);
 
-        $problem->load(['problemType', 'problemType.examType']);
+        $problem->load(['problemType', 'problemType.examType', 'assessments']);
 
         return $this->success(new ProblemResource($problem), 'New problem has been added');
+    }
+
+      /**
+     * Display the specified resource.
+     */
+    public function show(Problem $problem)
+    {
+        $problem->load(['problemType', 'problemType.examType', 'assessments']);
+        return new ProblemResource($problem);
     }
 
     /**
@@ -56,5 +66,10 @@ class ProblemController extends Controller
     {
         $problem->delete();
         return $this->success(null, 'Problem has been deleted');
+    }
+
+    public function getAllByProblemTypeId(ProblemType $problemType){
+        $problems = Problem::with(['problemType', 'problemType.examType', 'assessments'])->whereBelongsTo($problemType)->get();
+        return ProblemResource::collection($problems);
     }
 }

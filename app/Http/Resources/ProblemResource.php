@@ -22,6 +22,7 @@ class ProblemResource extends JsonResource
             'difficulty' => $this->difficulty,
             'duration' => $this->duration,
             'instructions' => $this->instructions,
+            'problem_assessments' => AssessmentResource::collection($this->whenLoaded('assessments')),
             'date_created' => $this->created_at,
         ];
     }
