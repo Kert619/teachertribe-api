@@ -28,7 +28,7 @@ class AssessmentController extends Controller
     public function store(StoreAssessmentRequest $request)
     {
         $request->validated($request->all());
-        
+
         $assessment = Assessment::create([
             'assessment_title' => $request->assessment_title,
             'description' => $request->description,
@@ -72,6 +72,7 @@ class AssessmentController extends Controller
     public function destroy(Request $request, Assessment $assessment)
     {
         if ($request->user()->id === $assessment->user_id) {
+            $assessment->problems()->detach();
             $assessment->delete();
             return $this->success(null, 'Assessment has been deleted');
         } else {
@@ -79,13 +80,14 @@ class AssessmentController extends Controller
         }
     }
 
-    public function checkExistingAssessmentTitle(Request $request){
+    public function checkExistingAssessmentTitle(Request $request)
+    {
         $request->validate([
             'assessment_title' => ['required']
         ]);
 
         $assessment = Assessment::where('assessment_title', $request->assessment_title)->first();
 
-       return $this->success(['isExist' => !!$assessment]);
+        return $this->success(['isExist' => !!$assessment]);
     }
 }
