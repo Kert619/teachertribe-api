@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\GetUserController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProblemController;
@@ -30,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/problem-types', ProblemTypeController::class);
     Route::apiResource('/problems', ProblemController::class);
     Route::apiResource('/assessments', AssessmentController::class);
+    Route::apiResource('/groups',GroupController::class);
 
     Route::prefix('/problem-types')->group(function(){
         Route::get('/{examType}/get-all-by-exam-type-id', [ProblemTypeController::class, 'getAllByExamTypeId']);

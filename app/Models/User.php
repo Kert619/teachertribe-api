@@ -46,4 +46,8 @@ class User extends Authenticatable
     public function assessments(){
         return $this->hasMany(Assessment::class);
     }
+
+    public function groups(){
+        return $this->hasMany(Group::class);
+    }
 }

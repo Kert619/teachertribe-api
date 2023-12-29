@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assessments_problems', function (Blueprint $table) {
-            $table->foreignId('assessment_id')->constrained();
-            $table->foreignId('problem_id')->constrained();
+        Schema::create('groups', function (Blueprint $table) {
+            $table->id();
+            $table->string('group_name');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->primary(['assessment_id','problem_id']);
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assessments_problems');
+        Schema::dropIfExists('groups');
     }
 };
