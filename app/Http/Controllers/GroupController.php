@@ -15,8 +15,8 @@ class GroupController extends Controller
      */
     public function index(Request $request)
     {
-        $groups = Group::with(['users'])->whereBelongsTo($request->user())->get();
-        return $groups;
+        $groups = Group::with(['user'])->whereBelongsTo($request->user())->get();
+        return GroupResource::collection($groups);
     }
 
     /**
@@ -33,7 +33,7 @@ class GroupController extends Controller
         'user_id' => $request->user()->id,
        ]);
 
-       return $this->success($newGroup, 'New group has been added');
+       return $this->success(New GroupResource($newGroup), 'New group has been added');
     }
 
     /**
