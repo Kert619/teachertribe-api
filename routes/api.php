@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssessmentController;
+use App\Http\Controllers\AssessmentExamineeController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\GroupController;
@@ -32,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/problems', ProblemController::class);
     Route::apiResource('/assessments', AssessmentController::class);
     Route::apiResource('/groups', GroupController::class);
+    Route::apiResource('/assessment-examinees', AssessmentExamineeController::class);
 
     Route::prefix('/problem-types')->group(function(){
         Route::get('/{examType}/get-all-by-exam-type-id', [ProblemTypeController::class, 'getAllByExamTypeId']);

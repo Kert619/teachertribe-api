@@ -10,11 +10,18 @@ class Assessment extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function problems(){
+    public function problems()
+    {
         return $this->belongsToMany(Problem::class, 'assessments_problems')->as('assessment_problems');
+    }
+
+    public function assessmentExaminees()
+    {
+        return $this->hasMany(AssessmentExaminee::class);
     }
 }

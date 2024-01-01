@@ -14,4 +14,8 @@ class Group extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function assessmentExaminees(){
+        return $this->hasMany(AssessmentExaminee::class);
+    }
 }

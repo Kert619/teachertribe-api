@@ -17,6 +17,7 @@ class GroupResource extends JsonResource
         return [
             'id' => $this->id,
             'group_name' => $this->group_name,
+            'assessment_examinees' => AssessmentExamineeResource::collection($this->whenLoaded('assessmentExaminees')),
             'user' => new UserResource($this->whenLoaded('user'))
         ];
     }
