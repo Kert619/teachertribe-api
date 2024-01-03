@@ -13,7 +13,7 @@ class ExamTypeController extends Controller
      */
     public function index()
     {
-        $examTypes = ExamType::with('problemTypes')->get();
+        $examTypes = ExamType::with(['problemTypes', 'problemTypes.problems'])->get();
         return ExamTypeResource::collection($examTypes);
     }
 
@@ -22,7 +22,7 @@ class ExamTypeController extends Controller
      */
     public function show(ExamType $examType)
     {
-        $examType->load('problemTypes');
+        $examType->load(['problemTypes', 'problemTypes.problems']);
         return new ExamTypeResource($examType);
     }
 }
