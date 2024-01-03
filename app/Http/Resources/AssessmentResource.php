@@ -24,9 +24,7 @@ class AssessmentResource extends JsonResource
             'window_proctor' => $this->window_proctor,
             'randomize' => $this->randomize,
             'assessment_problems' => ProblemResource::collection($this->whenLoaded('problems')),
-            'pending' => AssessmentExaminee::where('assessment_id', $this->id)->where('status', 'Pending')->count(),
-            'ongoing' => AssessmentExaminee::where('assessment_id', $this->id)->where('status', 'On-Going')->count(),
-            'completed' => AssessmentExaminee::where('assessment_id', $this->id)->where('status', 'Completed')->count(),
+            'assessment_examinees' => AssessmentExamineeResource::collection($this->whenLoaded('assessmentExaminees')),
         ];
     }
 }

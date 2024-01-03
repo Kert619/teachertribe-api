@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAssessmentRequest;
+use App\Http\Requests\UpdateAssessmentRequest;
 use App\Http\Resources\AssessmentResource;
 use App\Models\Assessment;
 use App\Traits\HttpResponses;
@@ -18,7 +19,7 @@ class AssessmentController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->per_page ?? 10;
-        $assessments = Assessment::with(['problems'])->whereBelongsTo($request->user())->paginate($perPage);
+        $assessments = Assessment::with(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group'])->whereBelongsTo($request->user())->paginate($perPage);
         return AssessmentResource::collection($assessments);
     }
 
@@ -41,7 +42,7 @@ class AssessmentController extends Controller
 
         $assessment->problems()->attach($request->problem_ids, ['created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
 
-        $assessment->load(['problems']);
+        $assessment->load(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
         return $this->success(new AssessmentResource($assessment), 'New assessment has been added');
     }
 
@@ -51,7 +52,7 @@ class AssessmentController extends Controller
     public function show(Request $request, Assessment $assessment)
     {
         if ($request->user()->id === $assessment->user_id) {
-            $assessment->load(['problems']);
+            $assessment->load(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
             return new AssessmentResource($assessment);
         } else {
             return $this->error('Assessment not found', 404);
@@ -61,9 +62,22 @@ class AssessmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateAssessmentRequest $request, Assessment $assessment)
     {
-        //
+        $request->validated($request->all());
+
+        $assessment->update([
+            'assessment_title' => $request->assessment_title,
+            'description' => $request->description,
+            'time_restriction' => $request->time_restriction,
+            'setup_time' => $request->setup_time,
+            'window_proctor' => $request->window_proctor,
+            'randomize' => $request->randomize,
+        ]);
+
+        $assessment->problems()->syncWithPivotValues($request->problem_ids, ['updated_at' => Carbon::now()]);
+        $assessment->load(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
+        return $this->success(new AssessmentResource($assessment), 'Assessment has been updated');
     }
 
     /**
@@ -86,8 +100,8 @@ class AssessmentController extends Controller
             'assessment_title' => ['required']
         ]);
 
-        $assessment = Assessment::where('assessment_title', $request->assessment_title)->first();
+        $assessmentCount = Assessment::where('assessment_title', $request->assessment_title)->count();
 
-        return $this->success(['isExist' => !!$assessment]);
+        return $this->success(['count' => $assessmentCount]);
     }
 }

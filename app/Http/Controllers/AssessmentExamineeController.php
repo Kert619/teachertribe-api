@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAssessmentExamineeRequest;
 use App\Http\Resources\AssessmentExamineeResource;
+use App\Mail\ExamineeInvited;
 use App\Models\AssessmentExaminee;
 use App\Models\Examinee;
 use App\Traits\HttpResponses;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AssessmentExamineeController extends Controller
 {
@@ -33,6 +36,8 @@ class AssessmentExamineeController extends Controller
         $request->validated($request->all());
 
         foreach ($request->examinees as $examinee) {
+            $pin = $this->generatePin(8);
+
             $newExaminee = Examinee::create([
                 'first_name' => $examinee['first_name'],
                 'last_name' => $examinee['last_name'],
@@ -40,18 +45,33 @@ class AssessmentExamineeController extends Controller
                 'contact' => $examinee['contact'],
             ]);
 
-            AssessmentExaminee::create([
+           $assessmentExaminee = AssessmentExaminee::create([
                 'assessment_id' => $request->assessment_id,
                 'examinee_id' => $newExaminee->id,
-                'pin' => $this->generatePin(8),
+                'pin' => $pin,
                 'test_mode' => $examinee['test_mode'],
                 'group_id' => $examinee['group_id'],
                 'schedule_from' => $examinee['schedule_from'],
                 'schedule_to' => $examinee['schedule_to'],
             ]);
+
+            $assessmentExaminee->load('assessment');
+
+            $mailInfo = [
+                'fullname' => $examinee['first_name'] . ' ' . $examinee['last_name'],
+                'assessmentTitle' => $assessmentExaminee->assessment->assessment_title,
+                'pin' => $pin,
+                'schedule_from' => Carbon::parse($examinee['schedule_from']),
+                'schedule_to' => Carbon::parse($examinee['schedule_to']),
+                'subject' => $request->subject,
+            ];
+
+            Mail::to($examinee['email'])->send(new ExamineeInvited($mailInfo));
         }
 
-        return $this->success(null, 'Examinees successfully added and invited', 201);
+        $assessmentExaminees = AssessmentExaminee::with(['examinee', 'group'])->where('assessment_id', $request->assessment_id)->get();
+
+        return $this->success(AssessmentExamineeResource::collection($assessmentExaminees), 'Examinees successfully added and invited', 201);
     }
 
     /**
