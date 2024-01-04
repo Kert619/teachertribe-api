@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('assessments_problems', function (Blueprint $table) {
             $table->foreignId('assessment_id')->constrained();
             $table->foreignId('problem_id')->constrained();
+            $table->integer('order');
             $table->timestamps();
             $table->softDeletes();
 

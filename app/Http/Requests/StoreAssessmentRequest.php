@@ -25,7 +25,7 @@ class StoreAssessmentRequest extends FormRequest
             'assessment_title' => ['required'],
             'description' => ['nullable'],
             'time_restriction' => ['required', 'boolean'],
-            'setup_time' => ['nullable', 'integer'],
+            'setup_time' => ['required', 'integer'],
             'window_proctor' => ['required', 'boolean'],
             'randomize' => ['required', 'boolean'],
             'problem_ids' => ['required', 'array']

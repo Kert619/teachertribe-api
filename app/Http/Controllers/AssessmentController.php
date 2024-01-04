@@ -19,7 +19,9 @@ class AssessmentController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->per_page ?? 10;
-        $assessments = Assessment::with(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group'])->whereBelongsTo($request->user())->paginate($perPage);
+        $assessments = Assessment::with(['problems' => function ($query) {
+            $query->orderBy('order');
+        }, 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group'])->whereBelongsTo($request->user())->paginate($perPage);
         return AssessmentResource::collection($assessments);
     }
 
@@ -40,9 +42,13 @@ class AssessmentController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        $assessment->problems()->attach($request->problem_ids, ['created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+        foreach ($request->problem_ids as $idx => $problem_id) {
+            $assessment->problems()->attach($problem_id, ['order' => $idx + 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+        }
 
-        $assessment->load(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
+        $assessment->load(['problems' => function ($query) {
+            $query->orderBy('order');
+        }, 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
         return $this->success(new AssessmentResource($assessment), 'New assessment has been added');
     }
 
@@ -52,7 +58,9 @@ class AssessmentController extends Controller
     public function show(Request $request, Assessment $assessment)
     {
         if ($request->user()->id === $assessment->user_id) {
-            $assessment->load(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
+            $assessment->load(['problems' => function ($query) {
+                $query->orderBy('order');
+            }, 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
             return new AssessmentResource($assessment);
         } else {
             return $this->error('Assessment not found', 404);
@@ -75,8 +83,15 @@ class AssessmentController extends Controller
             'randomize' => $request->randomize,
         ]);
 
-        $assessment->problems()->syncWithPivotValues($request->problem_ids, ['updated_at' => Carbon::now()]);
-        $assessment->load(['problems', 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
+        $assessment->problems()->detach();
+
+        foreach ($request->problem_ids as $idx => $problem_id) {
+            $assessment->problems()->attach($problem_id, ['order' => $idx + 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+        }
+
+        $assessment->load(['problems' => function ($query) {
+            $query->orderBy('order');
+        }, 'assessmentExaminees', 'assessmentExaminees.examinee', 'assessmentExaminees.group']);
         return $this->success(new AssessmentResource($assessment), 'Assessment has been updated');
     }
 
