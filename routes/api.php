@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProblemTypeController;
+use App\Http\Controllers\VerifyPinController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', LoginController::class);
+
+Route::post('/verify-pin', VerifyPinController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
