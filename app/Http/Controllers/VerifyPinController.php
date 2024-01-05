@@ -14,7 +14,7 @@ class VerifyPinController extends Controller
     {
         $request->validate(['pin' => ['required']]);
 
-        $examinee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems'])->where('pin', $request->pin)->firstOrFail();
+        $examinee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])->where('pin', $request->pin)->firstOrFail();
 
         return new AssessmentExamineeResource($examinee);
     }

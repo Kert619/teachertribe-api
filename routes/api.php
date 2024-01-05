@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\AssessmentExamineeController;
+use App\Http\Controllers\ExamineeController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\GroupController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProblemTypeController;
+use App\Http\Controllers\UpdateExamineeDetailsController;
 use App\Http\Controllers\VerifyPinController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +29,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', LoginController::class);
 
 Route::post('/verify-pin', VerifyPinController::class);
+
+Route::middleware('verify-pin')->group(function(){
+   Route::put('/update-examinee-details', UpdateExamineeDetailsController::class);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
