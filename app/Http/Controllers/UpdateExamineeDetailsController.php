@@ -28,9 +28,10 @@ class UpdateExamineeDetailsController extends Controller
             'programming_experience' => $request->programming_experience,
         ]);
 
-        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems'])->where('pin', $request->pin)->firstOrFail();
+        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])->where('pin', $request->pin)->firstOrFail();
         $assessmentExaminee->update([
-            'started_on' => Carbon::now()
+            'started_on' => Carbon::now(),
+            'status' => 'On-Going'
         ]);
 
         return $this->success(new AssessmentExamineeResource($assessmentExaminee), 'Examinee details has been updated');

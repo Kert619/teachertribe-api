@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\AssessmentExamineeController;
-use App\Http\Controllers\ExamineeController;
 use App\Http\Controllers\ExamTypeController;
+use App\Http\Controllers\FinishTestController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LoginController;
@@ -30,9 +31,17 @@ Route::post('/login', LoginController::class);
 
 Route::post('/verify-pin', VerifyPinController::class);
 
-Route::middleware('verify-pin')->group(function(){
-   Route::put('/update-examinee-details', UpdateExamineeDetailsController::class);
+Route::middleware('verify-pin')->group(function () {
+    Route::put('/update-examinee-details', UpdateExamineeDetailsController::class);
+    
+
+    Route::get('/answers', [AnswerController::class, 'index']);
+    Route::post('/answers', [AnswerController::class, 'submitAnswer']);
+    Route::get('/answers/getByAssessmentExamineeIdAndProblemId', [AnswerController::class, 'getByAssessmentExamineeIdAndProblemId']);
+    Route::get('/answers/{assessmentExaminee}', [AnswerController::class, 'show']);
+    Route::put('/finish-test/{assessmentExaminee}', FinishTestController::class);
 });
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
@@ -44,15 +53,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/groups', GroupController::class);
     Route::apiResource('/assessment-examinees', AssessmentExamineeController::class);
 
-    Route::prefix('/problem-types')->group(function(){
+    Route::prefix('/problem-types')->group(function () {
         Route::get('/{examType}/get-all-by-exam-type-id', [ProblemTypeController::class, 'getAllByExamTypeId']);
     });
 
-    Route::prefix('/problems')->group(function(){
+    Route::prefix('/problems')->group(function () {
         Route::get('/{problemType}/get-all-by-problem-type-id', [ProblemController::class, 'getAllByProblemTypeId']);
     });
 
-    Route::prefix('/assessments')->group(function(){
+    Route::prefix('/assessments')->group(function () {
         Route::post('/check-existing-assessment-title', [AssessmentController::class, 'checkExistingAssessmentTitle']);
     });
 

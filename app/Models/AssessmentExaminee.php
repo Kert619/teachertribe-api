@@ -4,11 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Sanctum\HasApiTokens;
 
 class AssessmentExaminee extends Model
 {
-    use HasApiTokens;
     use HasFactory;
     protected $guarded = [];
 
@@ -22,5 +20,13 @@ class AssessmentExaminee extends Model
 
     public function group(){
         return $this->belongsTo(Group::class);
+    }
+
+    public function answers(){
+        return $this->hasMany(Answer::class);
+    }
+
+    public function problems(){
+        return $this->belongsToMany(Problem::class, 'assessment_examinees_problems')->as('problems');
     }
 }
