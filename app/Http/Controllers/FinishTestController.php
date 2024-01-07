@@ -16,8 +16,15 @@ class FinishTestController extends Controller
   {
     $answers =  Answer::where('assessment_examinee_id', $assessmentExaminee->id)->get();
 
+    $assessmentExaminee->load(['assessment', 'examinee', 'group']);
+
+    $ids = $assessmentExaminee->assessment->problems->pluck('id');
+
+    $assessmentExaminee->problems()->attach($ids, ['created_at' => Carbon::now(), 'updated_at' => Carbon::now()]);
+
+
     $scoreAttained = $answers->sum('score_attained');
-    $totalScore = $answers->sum('total_score');
+    $totalScore = $assessmentExaminee->problems->sum('score');
     $marks = "$scoreAttained/$totalScore";
 
     $assessmentExaminee->update([
@@ -25,12 +32,6 @@ class FinishTestController extends Controller
       'marks' => $marks,
       'status' => 'Completed'
     ]);
-
-    $assessmentExaminee->load(['assessment', 'examinee', 'group']);
-
-    $ids = $assessmentExaminee->assessment->problems->pluck('id');
-
-    $assessmentExaminee->problems()->attach($ids);
 
     return $this->success(new AssessmentExamineeResource($assessmentExaminee));
   }

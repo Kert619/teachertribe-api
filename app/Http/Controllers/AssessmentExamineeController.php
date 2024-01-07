@@ -20,11 +20,19 @@ class AssessmentExamineeController extends Controller
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'assessment_id' => ['required'],
-        ]);
+        $search = $request->search ?? '';
+        $perPage = $request->per_page ?? 10;
 
-        $assessmentExaminees = AssessmentExaminee::with(['assessment', 'examinee', 'group'])->where('assessment_id', $request->assessment_id)->get();
+        $assessmentExaminees = AssessmentExaminee::with(['assessment', 'examinee', 'group'])
+        ->where(function ($query) use ($search){
+            $query->whereHas('assessment', function($subQuery) use ($search){
+                $subQuery->where('assessment_title', 'like', "%$search%");
+            })->orWhereHas('examinee', function($subQuery) use ($search){
+                $subQuery->where('email', 'like', "%$search%");
+            });
+        })
+        ->paginate($perPage);
+
         return AssessmentExamineeResource::collection($assessmentExaminees);
     }
 
@@ -79,7 +87,8 @@ class AssessmentExamineeController extends Controller
      */
     public function show(AssessmentExaminee $assessmentExaminee)
     {
-        //
+        $assessmentExaminee->load(['assessment', 'examinee', 'group']);
+        return new AssessmentExamineeResource($assessmentExaminee);
     }
 
     /**

@@ -16,14 +16,20 @@ class VerifyPinController extends Controller
         $dateTimeNow = Carbon::now();
         $request->validate(['pin' => ['required']]);
 
-        $examinee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
+        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
             ->where('pin', $request->pin)
             ->where('status', '<>', 'Completed')
             ->where('schedule_from', '<=', $dateTimeNow)
             ->where('schedule_to', '>=', $dateTimeNow)
             ->firstOrFail();
 
+        if ($assessmentExaminee->started_on) {
+            $assessmentExaminee->update([
+                'retry_count' => $assessmentExaminee->retry_count + 1
+            ]);
+        }
 
-        return new AssessmentExamineeResource($examinee);
+
+        return new AssessmentExamineeResource($assessmentExaminee);
     }
 }
