@@ -29,6 +29,7 @@ class AssessmentExamineeResource extends JsonResource
             'status' => $this->status,
             'retry_count' => $this->retry_count,
             'answers' => AnswerResource::collection($this->whenLoaded('answers')),
+            'problems' => ProblemResource::collection($this->whenLoaded('problems'))
         ];
     }
 }

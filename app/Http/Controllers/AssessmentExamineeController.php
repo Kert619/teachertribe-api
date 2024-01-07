@@ -87,7 +87,8 @@ class AssessmentExamineeController extends Controller
      */
     public function show(AssessmentExaminee $assessmentExaminee)
     {
-        $assessmentExaminee->load(['assessment', 'examinee', 'group']);
+        if($assessmentExaminee->status !== "Completed") return $this->error('Access denied. Assessment not completed.', 403);
+        $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers','answers.problem']);
         return new AssessmentExamineeResource($assessmentExaminee);
     }
 
