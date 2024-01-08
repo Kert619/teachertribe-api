@@ -11,7 +11,22 @@ class VerifyPinController extends Controller
 {
     //
 
-    public function __invoke(Request $request)
+    public function fetchPin(Request $request)
+    {
+        $dateTimeNow = Carbon::now();
+        $request->validate(['pin' => ['required']]);
+
+        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
+            ->where('pin', $request->pin)
+            ->where('status', '<>', 'Completed')
+            ->where('schedule_from', '<=', $dateTimeNow)
+            ->where('schedule_to', '>=', $dateTimeNow)
+            ->firstOrFail();
+
+        return new AssessmentExamineeResource($assessmentExaminee);
+    }
+
+    public function verifyPin(Request $request)
     {
         $dateTimeNow = Carbon::now();
         $request->validate(['pin' => ['required']]);
@@ -28,7 +43,6 @@ class VerifyPinController extends Controller
                 'retry_count' => $assessmentExaminee->retry_count + 1
             ]);
         }
-
 
         return new AssessmentExamineeResource($assessmentExaminee);
     }

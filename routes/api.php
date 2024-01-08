@@ -29,7 +29,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', LoginController::class);
 
-Route::post('/verify-pin', VerifyPinController::class);
+Route::post('/verify-pin', [VerifyPinController::class, 'verifyPin']);
+Route::get('/fetch-pin', [VerifyPinController::class, 'fetchPin']);
 
 Route::middleware('verify-pin')->group(function () {
     Route::put('/update-examinee-details', UpdateExamineeDetailsController::class);
