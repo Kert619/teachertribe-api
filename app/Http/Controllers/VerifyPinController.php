@@ -16,7 +16,9 @@ class VerifyPinController extends Controller
         $dateTimeNow = Carbon::now();
         $request->validate(['pin' => ['required']]);
 
-        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
+        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems' => function ($query) {
+            $query->orderBy('order');
+        }, 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
             ->where('pin', $request->pin)
             ->where('status', '<>', 'Completed')
             ->where('schedule_from', '<=', $dateTimeNow)
@@ -31,7 +33,9 @@ class VerifyPinController extends Controller
         $dateTimeNow = Carbon::now();
         $request->validate(['pin' => ['required']]);
 
-        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
+        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems' => function ($query) {
+            $query->orderBy('order');
+        }, 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])
             ->where('pin', $request->pin)
             ->where('status', '<>', 'Completed')
             ->where('schedule_from', '<=', $dateTimeNow)
