@@ -7,6 +7,7 @@ use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\FinishTestController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\JDoodleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProblemController;
@@ -33,6 +34,7 @@ Route::post('/verify-pin', [VerifyPinController::class, 'verifyPin']);
 Route::get('/fetch-pin', [VerifyPinController::class, 'fetchPin']);
 
 Route::middleware('verify-pin')->group(function () {
+    Route::post('/execute-code', JDoodleController::class);
     Route::put('/update-examinee-details', UpdateExamineeDetailsController::class);
     
 

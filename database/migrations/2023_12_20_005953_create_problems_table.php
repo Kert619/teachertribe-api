@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('difficulty');
             $table->integer('duration');
             $table->text('instructions');
-            $table->integer('score');
+            $table->integer('score')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
