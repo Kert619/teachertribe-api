@@ -109,7 +109,12 @@ class AssessmentExamineeController extends Controller
      */
     public function destroy(Request $request, AssessmentExaminee $assessmentExaminee)
     {
-        //
+        if($request->user()->id === $assessmentExaminee->assessment->user_id){
+            $assessmentExaminee->delete();
+            return $this->success(null, "Assessment examinee has been deleted");
+        } else {
+            return $this->error('You are not authorized to perform this action', 403);
+        }
     }
 
     private function generatePin($length)

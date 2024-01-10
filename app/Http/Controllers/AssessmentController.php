@@ -114,7 +114,7 @@ class AssessmentController extends Controller
             'assessment_title' => ['required']
         ]);
 
-        $assessmentCount = Assessment::where('assessment_title', $request->assessment_title)->count();
+        $assessmentCount = Assessment::withTrashed()->where('assessment_title', $request->assessment_title)->count();
 
         return $this->success(['count' => $assessmentCount]);
     }
