@@ -101,7 +101,6 @@ class AssessmentController extends Controller
     public function destroy(Request $request, Assessment $assessment)
     {
         if ($request->user()->id === $assessment->user_id) {
-            $assessment->problems()->detach();
             $assessment->delete();
             return $this->success(null, 'Assessment has been deleted');
         } else {

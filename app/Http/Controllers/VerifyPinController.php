@@ -23,6 +23,9 @@ class VerifyPinController extends Controller
             ->where('status', '<>', 'Completed')
             ->where('schedule_from', '<=', $dateTimeNow)
             ->where('schedule_to', '>=', $dateTimeNow)
+            ->whereHas('assessment', function($query){
+                $query->whereNull('deleted_at');
+            })
             ->firstOrFail();
 
         return new AssessmentExamineeResource($assessmentExaminee);
@@ -40,6 +43,9 @@ class VerifyPinController extends Controller
             ->where('status', '<>', 'Completed')
             ->where('schedule_from', '<=', $dateTimeNow)
             ->where('schedule_to', '>=', $dateTimeNow)
+            ->whereHas('assessment', function($query){
+                $query->whereNull('deleted_at');
+            })
             ->firstOrFail();
 
         if ($assessmentExaminee->started_on) {

@@ -31,6 +31,9 @@ class AssessmentExamineeController extends Controller
                 $subQuery->where('email', 'like', "%$search%");
             });
         })
+        ->whereHas('assessment', function($query) use ($request){
+            $query->whereBelongsTo($request->user());
+        })
         ->paginate($perPage);
 
         return AssessmentExamineeResource::collection($assessmentExaminees);
@@ -85,8 +88,9 @@ class AssessmentExamineeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AssessmentExaminee $assessmentExaminee)
+    public function show(Request $request, AssessmentExaminee $assessmentExaminee)
     {
+        if($request->user()->id !== $assessmentExaminee->assessment->user_id) return $this->error('Access denied. You are not the owner of this assessment', 403);
         if($assessmentExaminee->status !== "Completed") return $this->error('Access denied. Assessment not completed.', 403);
         $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers','answers.problem']);
         return new AssessmentExamineeResource($assessmentExaminee);
