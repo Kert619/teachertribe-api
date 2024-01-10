@@ -77,7 +77,11 @@ class AssessmentExamineeController extends Controller
                 'subject' => $request->subject,
             ];
 
-            Mail::to($examinee['email'])->send(new ExamineeInvited($mailInfo));
+            try {
+                Mail::to($examinee['email'])->send(new ExamineeInvited($mailInfo));
+            } catch (\Throwable $th) {
+                //continue execution
+            }
         }
 
         $assessmentExaminees = AssessmentExaminee::with(['examinee', 'group'])->where('assessment_id', $request->assessment_id)->get();
