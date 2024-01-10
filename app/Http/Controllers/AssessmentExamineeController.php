@@ -43,8 +43,6 @@ class AssessmentExamineeController extends Controller
     {
         $request->validated($request->all());
 
-        set_time_limit(1800);
-
         foreach ($request->examinees as $examinee) {
             $pin = $this->generatePin(8);
 

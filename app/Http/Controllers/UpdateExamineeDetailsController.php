@@ -28,7 +28,9 @@ class UpdateExamineeDetailsController extends Controller
             'programming_experience' => $request->programming_experience,
         ]);
 
-        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems', 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])->where('pin', $request->pin)->firstOrFail();
+        $assessmentExaminee = AssessmentExaminee::with(['assessment', 'examinee', 'group', 'assessment.problems' => function ($query) {
+            $query->orderBy("order");
+        }, 'assessment.problems.problemType', 'assessment.problems.problemType.examType'])->where('pin', $request->pin)->firstOrFail();
         $assessmentExaminee->update([
             'started_on' => Carbon::now(),
             'status' => 'On-Going'

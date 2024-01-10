@@ -25,7 +25,7 @@ class StoreAssessmentExamineeRequest extends FormRequest
             'examinees' => ['required','array'],
             'examinees.*.first_name' => ['required'],
             'examinees.*.last_name' => ['required'],
-            'examinees.*.contact' => ['required'],
+            'examinees.*.contact' => ['nullable'],
             'examinees.*.email' => ['required', 'email'],
             'examinees.*.test_mode' => ['required'],
             'examinees.*.group_id' => ['nullable'],
