@@ -13,6 +13,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\UpdateExamineeDetailsController;
+use App\Http\Controllers\UpdateUserController;
 use App\Http\Controllers\VerifyPinController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +37,7 @@ Route::get('/fetch-pin', [VerifyPinController::class, 'fetchPin']);
 Route::middleware('verify-pin')->group(function () {
     Route::post('/execute-code', JDoodleController::class);
     Route::put('/update-examinee-details', UpdateExamineeDetailsController::class);
-    
+
 
     Route::get('/answers', [AnswerController::class, 'index']);
     Route::post('/answers', [AnswerController::class, 'submitAnswer']);
@@ -48,6 +49,7 @@ Route::middleware('verify-pin')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', GetUserController::class);
+    Route::put('/update-user/{user}', UpdateUserController::class);
 
     Route::apiResource('/exam-types', ExamTypeController::class);
     Route::apiResource('/problem-types', ProblemTypeController::class);
