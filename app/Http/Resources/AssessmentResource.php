@@ -23,6 +23,7 @@ class AssessmentResource extends JsonResource
             'setup_time' => $this->setup_time,
             'window_proctor' => $this->window_proctor,
             'randomize' => $this->randomize,
+            'created_at' => $this->created_at,
             'assessment_problems' => ProblemResource::collection($this->whenLoaded('problems')),
             'assessment_examinees' => AssessmentExamineeResource::collection($this->whenLoaded('assessmentExaminees')),
         ];
