@@ -73,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('/assessment-examinees')->group(function () {
-        Route::post('/show-edit/{assessmentExaminee}', [AssessmentExamineeController::class, 'showEdit']);
+        Route::get('/show-edit/{assessmentExaminee}', [AssessmentExamineeController::class, 'showEdit']);
     });
 
 
