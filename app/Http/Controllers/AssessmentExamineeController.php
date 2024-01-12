@@ -95,13 +95,21 @@ class AssessmentExamineeController extends Controller
      */
     public function show(Request $request, AssessmentExaminee $assessmentExaminee)
     {
-        $retreiveCompleted = $request->retrieve_completed;
-      
         if ($request->user()->id !== $assessmentExaminee->assessment->user_id) return $this->error('Access denied. You are not the owner of this assessment', 403);
 
-        if ($retreiveCompleted == "true" && $assessmentExaminee->status !== "Completed") {
-           return $this->error('Access denied. Assessment not completed.', 403);
-        } elseif($retreiveCompleted == "false" && $assessmentExaminee->status === "Completed"){
+        if ($assessmentExaminee->status !== "Completed") {
+            return $this->error('Access denied. Assessment not completed.', 403);
+        }
+
+        $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers', 'answers.problem']);
+        return new AssessmentExamineeResource($assessmentExaminee);
+    }
+
+    public function showEdit(Request $request, AssessmentExaminee $assessmentExaminee)
+    {
+        if ($request->user()->id !== $assessmentExaminee->assessment->user_id) return $this->error('Access denied. You are not the owner of this assessment', 403);
+
+        if ($assessmentExaminee->status === "Completed") {
             return $this->error('Access denied. Assessment already completed.', 403);
         }
 

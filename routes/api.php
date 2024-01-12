@@ -72,6 +72,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/check-existing-assessment-title', [AssessmentController::class, 'checkExistingAssessmentTitle']);
     });
 
+    Route::prefix('/assessment-examinees')->group(function () {
+        Route::post('/show-edit/{assessmentExaminee}', [AssessmentExamineeController::class, 'showEdit']);
+    });
+
 
 
     Route::post('logout', LogoutController::class);
