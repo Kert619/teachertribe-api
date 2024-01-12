@@ -101,6 +101,8 @@ class AssessmentExamineeController extends Controller
 
         if ($retreiveCompleted == "true" && $assessmentExaminee->status !== "Completed") {
            return $this->error('Access denied. Assessment not completed.', 403);
+        } elseif($retreiveCompleted == "false" && $assessmentExaminee->status === "Completed"){
+            return $this->error('Access denied. Assessment already completed.', 403);
         }
 
         $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers', 'answers.problem']);
