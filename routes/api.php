@@ -7,6 +7,7 @@ use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\FinishTestController;
 use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\IncrementRetryCountController;
 use App\Http\Controllers\JDoodleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
@@ -44,6 +45,7 @@ Route::middleware('verify-pin')->group(function () {
     Route::get('/answers/getByAssessmentExamineeIdAndProblemId', [AnswerController::class, 'getByAssessmentExamineeIdAndProblemId']);
     Route::get('/answers/{assessmentExaminee}', [AnswerController::class, 'show']);
     Route::put('/finish-test/{assessmentExaminee}', FinishTestController::class);
+    Route::patch('/increment-retry-count/{assessmentExaminee}', IncrementRetryCountController::class);
 });
 
 

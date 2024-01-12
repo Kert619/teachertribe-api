@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAssessmentExamineeRequest;
+use App\Http\Requests\UpdateAssessmentExamineeRequest;
 use App\Http\Resources\AssessmentExamineeResource;
 use App\Mail\ExamineeInvited;
 use App\Models\AssessmentExaminee;
@@ -24,17 +25,17 @@ class AssessmentExamineeController extends Controller
         $perPage = $request->per_page ?? 10;
 
         $assessmentExaminees = AssessmentExaminee::with(['assessment', 'examinee', 'group'])
-        ->where(function ($query) use ($search){
-            $query->whereHas('assessment', function($subQuery) use ($search){
-                $subQuery->where('assessment_title', 'like', "%$search%");
-            })->orWhereHas('examinee', function($subQuery) use ($search){
-                $subQuery->where('email', 'like', "%$search%");
-            });
-        })
-        ->whereHas('assessment', function($query) use ($request){
-            $query->whereBelongsTo($request->user());
-        })
-        ->paginate($perPage);
+            ->where(function ($query) use ($search) {
+                $query->whereHas('assessment', function ($subQuery) use ($search) {
+                    $subQuery->where('assessment_title', 'like', "%$search%");
+                })->orWhereHas('examinee', function ($subQuery) use ($search) {
+                    $subQuery->where('email', 'like', "%$search%");
+                });
+            })
+            ->whereHas('assessment', function ($query) use ($request) {
+                $query->whereBelongsTo($request->user());
+            })
+            ->paginate($perPage);
 
         return AssessmentExamineeResource::collection($assessmentExaminees);
     }
@@ -56,7 +57,7 @@ class AssessmentExamineeController extends Controller
                 'contact' => $examinee['contact'],
             ]);
 
-           $assessmentExaminee = AssessmentExaminee::create([
+            $assessmentExaminee = AssessmentExaminee::create([
                 'assessment_id' => $request->assessment_id,
                 'examinee_id' => $newExaminee->id,
                 'pin' => $pin,
@@ -94,18 +95,48 @@ class AssessmentExamineeController extends Controller
      */
     public function show(Request $request, AssessmentExaminee $assessmentExaminee)
     {
-        if($request->user()->id !== $assessmentExaminee->assessment->user_id) return $this->error('Access denied. You are not the owner of this assessment', 403);
-        if($assessmentExaminee->status !== "Completed") return $this->error('Access denied. Assessment not completed.', 403);
-        $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers','answers.problem']);
+        $retreiveCompleted = $request->retrieve_completed;
+      
+        if ($request->user()->id !== $assessmentExaminee->assessment->user_id) return $this->error('Access denied. You are not the owner of this assessment', 403);
+
+        if ($retreiveCompleted == "true" && $assessmentExaminee->status !== "Completed") {
+           return $this->error('Access denied. Assessment not completed.', 403);
+        }
+
+        $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers', 'answers.problem']);
         return new AssessmentExamineeResource($assessmentExaminee);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateAssessmentExamineeRequest $request, AssessmentExaminee $assessmentExaminee)
     {
-        //
+        $request->validated($request->all());
+
+        if ($assessmentExaminee->status !== "Completed") {
+
+            $examinee = Examinee::findorFail($request->examinee_id);
+
+            $examinee->update([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'contact' => $request->contact,
+                'email' => $request->email,
+            ]);
+
+            $assessmentExaminee->update([
+                'test_mode' => $request->test_mode,
+                'group_id' => $request->group_id,
+                'schedule_from' => $request->schedule_from,
+                'schedule_to' => $request->schedule_to
+            ]);
+
+            $assessmentExaminee->load(['assessment', 'examinee', 'group', 'problems', 'answers', 'answers.problem']);
+            return $this->success($assessmentExaminee, "Examinee has been updated");
+        } else {
+            return $this->error('Examinee has already completed his/her assessment', 403);
+        }
     }
 
     /**
@@ -113,7 +144,7 @@ class AssessmentExamineeController extends Controller
      */
     public function destroy(Request $request, AssessmentExaminee $assessmentExaminee)
     {
-        if($request->user()->id === $assessmentExaminee->assessment->user_id){
+        if ($request->user()->id === $assessmentExaminee->assessment->user_id) {
             $assessmentExaminee->delete();
             return $this->success(null, "Assessment examinee has been deleted");
         } else {
