@@ -11,6 +11,7 @@ use App\Http\Controllers\IncrementRetryCountController;
 use App\Http\Controllers\JDoodleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\UpdateExamineeDetailsController;
@@ -31,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', LoginController::class);
+Route::post("/participants", [ParticipantController::class, 'store']);
 
 Route::post('/verify-pin', [VerifyPinController::class, 'verifyPin']);
 Route::get('/fetch-pin', [VerifyPinController::class, 'fetchPin']);
@@ -77,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
+    Route::get('/participants', [ParticipantController::class, 'index']);
 
     Route::post('logout', LogoutController::class);
 });
